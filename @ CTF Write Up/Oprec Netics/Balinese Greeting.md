@@ -26,13 +26,13 @@
 
 ### 2.1 - Insecure Use of render_template_string pada Input Pengguna
 
-| Kategori | Keterangan |
-| :--- | :--- |
-| **Severity** | **Critical** |
-| **CVSS** | 9.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) |
-| **Deskripsi** | Akar masalah fundamental dari vulnerability 1: baris kode `formated_template = template_str.replace('--BALINESE_WELCOME--', name)` dilanjutkan dengan `return render_template_string(formated_template)` menyebabkan nilai `name` dari pengguna disisipkan langsung ke dalam string template sebelum dirender Jinja2. Setiap ekspresi Jinja2 yang ada di dalam `name` akan dievaluasi oleh template. |
-| **Dampak** | Kerentanan ini adalah root cause yang memungkinkan semua jenis SSTI. Tidak ada blacklist yang dapat secara efektif mencegah SSTI selama `render_template_string` dipanggil pada konten yang mengandung input pengguna. |
-| **Saran Perbaikan** | Redesain arsitektur template: gunakan `render_template()` dengan file `.html` statis dan passing nama sebagai variabel konteks. Jinja2 secara otomatis melakukan HTML-escape pada variabel konteks sehingga ekspresi template tidak bisa diinjeksikan. |
+| Kategori            | Keterangan                                                                                                                                                                                                                                                                                                                                                                                           |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Severity**        | **Critical**                                                                                                                                                                                                                                                                                                                                                                                         |
+| **CVSS**            | 9.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)                                                                                                                                                                                                                                                                                                                                                            |
+| **Deskripsi**       | Akar masalah fundamental dari vulnerability 1: baris kode `formated_template = template_str.replace('--BALINESE_WELCOME--', name)` dilanjutkan dengan `return render_template_string(formated_template)` menyebabkan nilai `name` dari pengguna disisipkan langsung ke dalam string template sebelum dirender Jinja2. Setiap ekspresi Jinja2 yang ada di dalam `name` akan dievaluasi oleh template. |
+| **Dampak**          | Kerentanan ini adalah root cause yang memungkinkan semua jenis SSTI. Tidak ada blacklist yang dapat secara efektif mencegah SSTI selama `render_template_string` dipanggil pada konten yang mengandung input pengguna.                                                                                                                                                                               |
+| **Saran Perbaikan** | Redesain arsitektur template: gunakan `render_template()` dengan file `.html` statis dan passing nama sebagai variabel konteks. Jinja2 secara otomatis melakukan HTML-escape pada variabel konteks sehingga ekspresi template tidak bisa diinjeksikan.                                                                                                                                               |
 
 **Proof Of Concept**
 1. Akses endpoint: `POST http://43.129.35.148:7000/welcome`
