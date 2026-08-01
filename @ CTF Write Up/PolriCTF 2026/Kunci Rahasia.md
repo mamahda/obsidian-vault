@@ -28,10 +28,8 @@ Satu baris hex string, panjangnya genap (bisa dipasangkan jadi byte). Ini konsis
 
 ## 3. Hipotesis: Single-byte XOR
 
-Karena hint sudah cukup eksplisit (operasi bitwise sederhana + angka 42), langsung dicoba hipotesis paling masuk akal dulu: **XOR tiap byte dengan konstanta 42** — dengan dua kemungkinan interpretasi angka "42":
+Karena hint sudah cukup eksplisit (operasi bitwise sederhana + angka 42), langsung dicoba hipotesis paling masuk akal dulu: **XOR tiap byte dengan konstanta 42**
 
-- `42` sebagai desimal → `0x2A`
-- `42` sebagai heksadesimal → `0x42`
 
 ## 4. Script Decode
 
@@ -40,19 +38,17 @@ data = bytes.fromhex(
     "5a45465843697e6c181c51521a58751b5975405f1f5e751e75461a4941755d1b5e421a5f5e751e7541195357"
 )
 
-for key in (0x2A, 0x42):   # 42 desimal vs 42 heksadesimal
-    decoded = bytes(b ^ key for b in data)
-    print(hex(key), decoded)
+decoded = bytes(b ^ 42 for b in data)
+print(decoded)
 ```
 
 Hasil:
 
 ```
-0x2a b'polriCTF26{x0r_1s_ju5t_4_l0ck_w1th0ut_4_k3y}'
-0x42 b'\x18\x07\x04\x1a\x01+<.Z^\x13\x10X\x1a7Y...'   (bukan teks valid)
+b'polriCTF26{x0r_1s_ju5t_4_l0ck_w1th0ut_4_k3y}'
 ```
 
-Dengan key **`0x2A` (42 desimal)**, hasilnya langsung berupa flag yang valid dan terbaca sempurna. Interpretasi `0x42` menghasilkan byte-byte non-printable — jelas salah.
+Dengan key 42, hasilnya langsung berupa flag yang valid dan terbaca sempurna.
 
 ---
 
@@ -63,16 +59,3 @@ polriCTF26{x0r_1s_ju5t_4_l0ck_w1th0ut_4_k3y}
 ```
 
 Format flag `polriCTF26{...}` cocok, seluruh isi berupa karakter ASCII printable, dan secara tematik pesannya ("XOR itu cuma gembok tanpa kunci yang kuat") pas dengan premis soal — bahwa "enkripsi" penyerang ternyata cuma XOR sepele. 
-
----
-
-## 6. Kesimpulan
-
-| Aspek                                    | Detail                                                                                                                                                                                                                                                                               |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Teknik obfuscation                       | Single-byte XOR                                                                                                                                                                                                                                                                      |
-| Key                                      | `0x2A` (= 42 desimal — sesuai hint OTP di narasi)                                                                                                                                                                                                                                    |
-| Kenapa "terlihat acak tapi terlalu rapi" | XOR satu-byte terhadap teks ASCII menghasilkan byte yang terlihat non-random di mata orang awam tapi punya pola statistik jelas (mis. distribusi frekuensi byte yang bisa dikorelasikan ke frekuensi huruf bahasa Inggris) — beda jauh dari ciphertext hasil enkripsi kuat sungguhan |
-| Pelajaran                                | Saat clue narasi menyebut angka spesifik berulang kali (di sini "OTP 42"), itu hampir selalu langsung jadi kandidat key — coba dulu sebelum brute-force 256 kemungkinan byte                                                                                                         |
-
-Challenge ini jauh lebih sederhana dibanding tiga crackme binary sebelumnya (`cocoon`, `crackme_polri`, `vibe-check`) — di sini fokusnya pada literasi forensik dasar: mengenali pola obfuscation umum lewat konteks narasi, bukan reverse-engineering binary.
