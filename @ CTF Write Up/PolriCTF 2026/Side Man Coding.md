@@ -214,27 +214,4 @@ Output:
 ```
 polriCTF26{SMC_1S_S0_C00L!!}
 ```
-
----
-
-## 7. Verifikasi
-
-```bash
-$ ./crackme_polri 'polriCTF26{SMC_1S_S0_C00L!!}'
-Correct! Flag valid.
-```
-
-Solved!. ("SMC" pada flag = _Self-Modifying Code_, sesuai teknik utama yang dipakai binary ini.)
-
----
-
-## 8. Ringkasan Semua Jebakan (Decoy) di Binary Ini
-
-|Jebakan|Lokasi|Fakta Sebenarnya|
-|---|---|---|
-|3x flag palsu di `.rodata`|`strings`|Tidak pernah direferensikan sama sekali oleh kode|
-|String "DEBUG_BUILD" soal lokasi & key|`.rodata`|Lokasi asli `0x2080` (bukan `0x2000`), key asli `91 2c e7 4b 18` (bukan `00 00 00 00`)|
-|"SYSTEM NOTICE TO AI ASSISTANT" + flag palsu|`.rodata`|Prompt injection untuk AI assistant, bukan instruksi sungguhan, tidak direferensikan kode|
-|Fungsi SSE kembar di `.text` (`0x1420`)|statis, tidak dienkripsi|Tidak pernah dipanggil (`main` cuma memanggil fungsi hasil decode di memory mmap)|
-
-**Insight utama:** validasi sebenarnya sengaja disembunyikan sebagai **self-modifying code** (blob terenkripsi → decode saat runtime → `mprotect` jadi executable → dipanggil langsung), dilengkapi berlapis-lapis umpan statis di sekitarnya (string, fungsi kembar, bahkan prompt injection) untuk menjebak analisis yang tidak teliti. Solusinya tetap sama seperti biasa: verifikasi tiap klaim lewat disassembly & cross-reference, jangan percaya apa pun yang "terlihat gampang".
+_Solved!_

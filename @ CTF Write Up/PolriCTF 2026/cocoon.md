@@ -271,18 +271,3 @@ unpack> correct! that is the flag.
 ```
 
 Solved!. 
-
----
-
-## 9. Kesimpulan / Ringkasan Lapisan
-
-|Lapisan|Nama|Sifat|
-|---|---|---|
-|1|Seed generator (busy-loop FNV-ish)|Konstan, tidak tergantung input — cuma 32 iterasi asli di balik "obfuscation"|
-|2|Xorshift32 per posisi|State berubah tiap `i`, murni fungsi posisi|
-|3|XOR (32-bit) + ROL8 byte rendah|Satu-satunya titik yang bergantung pada input, tapi bijektif → bisa di-brute per byte|
-|4|Akumulator kuadratik (`i*i`) + XOR chain tanpa reset|Membuat tiap output byte bergantung pada seluruh riwayat sebelumnya (hash chain), memaksa solve dilakukan berurutan dari kiri ke kanan|
-
-**Insight kunci:** walau terlihat seperti cipher yang "tidak bisa dibalik" karena akumulasinya tidak pernah direset, setiap lapisan tetap **bijektif per posisi** terhadap byte input — sehingga transformasi bisa dipecah dan diselesaikan **byte-per-byte secara berurutan**, bukan dibalik sekaligus secara aljabar.
-
-String decoy `polriCTF26{unp4ck3d_wr0ng_l4y3r_d3c0y}` yang muncul di `strings` sengaja dipasang dan tidak pernah direferensikan kode — pengingat untuk selalu verifikasi lewat disassembly, bukan cuma grep string.

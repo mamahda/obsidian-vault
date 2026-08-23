@@ -2,6 +2,7 @@
 title:
 date:
 location:
-tags: 
+tags:
+  - Meetings
 status:
 ---
