@@ -1,0 +1,14 @@
+views:
+  - type: table
+    name: Table
+    filters:
+      and:
+        - file.tags.contains("UniversityNotes")
+    order:
+      - title
+      - date
+      - classes
+      - file.name
+    columnSize:
+      note.title: 151
+      note.classes: 136
